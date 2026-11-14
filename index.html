@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#090b12">
+<title>Pulsemark</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background: radial-gradient(circle at top, #182033 0%, #090b12 45%, #050609 100%);
+  color: white;
+}
+
+.app {
+  width: 100%;
+  max-width: 520px;
+  min-height: 100vh;
+  margin: auto;
+  padding: 22px 20px 35px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logoMark {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: #ff315d;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 25px rgba(255,49,93,.35);
+}
+
+.logoMark span {
+  font-size: 20px;
+}
+
+.logoText {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+}
+
+.status {
+  font-size: 12px;
+  color: #9ca6ba;
+}
+
+.card {
+  background: rgba(20,24,36,.82);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 25px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+
+.intro {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.intro h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+}
+
+.intro p {
+  margin: 0;
+  color: #9ca6ba;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.pulseDisplay {
+  width: 220px;
+  height: 220px;
+  margin: 28px auto;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  background: radial-gradient(circle, rgba(255,49,93,.20) 0%, rgba(255,49,93,.08) 45%, transparent 68%);
+  border: 1px solid rgba(255,49,93,.3);
+}
+
+.pulseDisplay::before {
+  content: "";
+  position: absolute;
+  inset: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,49,93,.22);
+}
+
+.pulseNumber {
+  font-size: 68px;
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+}
+
+.bpm {
+  display: block;
+  text-align: center;
+  color: #a9b0c0;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.pulse {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(255,49,93,0); }
+  50% { transform: scale(1.035); box-shadow: 0 0 45px rgba(255,49,93,.18); }
+}
+
+button {
+  width: 100%;
+  border: 0;
+  border-radius: 16px;
+  padding: 17px;
+  font-size: 16px;
+  font-weight: 800;
+  color: white;
+  background: #ff315d;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(255,49,93,.22);
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+button.secondary {
+  margin-top: 12px;
+  background: #252b3b;
+  box-shadow: none;
+}
+
+button.save {
+  margin-top: 12px;
+  background: #17845b;
+  box-shadow: 0 12px 30px rgba(23,132,91,.22);
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.info {
+  margin-top: 18px;
+  padding: 15px;
+  border-radius: 15px;
+  background: rgba(255,255,255,.045);
+  color: #9ca6ba;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.measurement {
+  display: none;
+  margin-top: 20px;
+}
+
+.measurement.active {
+  display: block;
+}
+
+video {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 16px;
+  background: #000;
+}
+
+.progress {
+  height: 7px;
+  background: #252b3b;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 15px;
+}
+
+.progressBar {
+  width: 0%;
+  height: 100%;
+  background: #ff315d;
+  transition: width .2s linear;
+}
+
+.timer {
+  text-align: center;
+  margin-top: 12px;
+  color: #a9b0c0;
+  font-size: 13px;
+}
+
+.wave {
+  height: 55px;
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+
+.wave span {
+  width: 3px;
+  height: 12px;
+  background: #ff315d;
+  border-radius: 5px;
+  animation: wave .8s infinite ease-in-out;
+}
+
+.wave span:nth-child(2) { animation-delay: .1s; }
+.wave span:nth-child(3) { animation-delay: .2s; }
+.wave span:nth-child(4) { animation-delay: .3s; }
+.wave span:nth-child(5) { animation-delay: .4s; }
+.wave span:nth-child(6) { animation-delay: .3s; }
+.wave span:nth-child(7) { animation-delay: .2s; }
+.wave span:nth-child(8) { animation-delay: .1s; }
+
+@keyframes wave {
+  0%,100% { height: 12px; }
+  50% { height: 42px; }
+}
+
+.history {
+  margin-top: 20px;
+}
+
+.history h2 {
+  font-size: 16px;
+  margin: 0 0 12px;
+}
+
+.historyItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 8px;
+  background: rgba(255,255,255,.045);
+  border-radius: 14px;
+}
+
+.historyInfo {
+  min-width: 0;
+  flex: 1;
+}
+
+.historyItem strong {
+  font-size: 18px;
+}
+
+.historyItem small {
+  color: #8992a6;
+}
+
+.historyActions {
+  display: flex;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+.historyActions button {
+  width: auto;
+  padding: 9px 11px;
+  font-size: 11px;
+  box-shadow: none;
+}
+
+.deleteBtn {
+  background: #7d2638;
+}
+
+.editBtn {
+  background: #252b3b;
+}
+
+.savePanel {
+  display: none;
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.savePanel.active {
+  display: block;
+}
+
+.savePanel h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.formRow label {
+  display: block;
+  color: #9ca6ba;
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+
+.formRow input {
+  width: 100%;
+  border: 1px solid #363d4d;
+  border-radius: 10px;
+  padding: 11px;
+  background: #111622;
+  color: white;
+  font-size: 15px;
+}
+
+.savePanel .cancel {
+  margin-top: 8px;
+  background: #252b3b;
+  box-shadow: none;
+}
+
+.disclaimer {
+  text-align: center;
+  color: #687186;
+  font-size: 10px;
+  line-height: 1.5;
+  margin-top: 24px;
+}
+
+@media (max-width: 400px) {
+  .historyItem {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .historyActions {
+    width: 100%;
+  }
+
+  .historyActions button {
+    flex: 1;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <div class="logo">
+    <div class="logoMark"><span>♥</span></div>
+    <div class="logoText">Pulsemark</div>
+  </div>
+  <div class="status" id="status">Ready</div>
+</header>
+
+<div class="card">
+
+  <div class="intro">
+    <h1>Pulse Check</h1>
+    <p>Place your fingertip gently over the rear camera and flashlight.</p>
+  </div>
+
+  <div class="pulseDisplay" id="pulseCircle">
+    <div>
+      <div class="pulseNumber" id="bpm">--</div>
+      <span class="bpm">BPM</span>
+    </div>
+  </div>
+
+  <button id="startBtn">Start Pulse Measurement</button>
+  <button class="secondary" id="stopBtn" disabled>Stop</button>
+
+  <div class="measurement" id="measurement">
+
+    <video id="camera" autoplay muted playsinline></video>
+
+    <div class="wave">
+      <span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="progress">
+      <div class="progressBar" id="progressBar"></div>
+    </div>
+
+    <div class="timer" id="timer">Preparing camera...</div>
+
+    <button class="save" id="saveBtn" disabled>Save Reading</button>
+
+  </div>
+
+  <div class="savePanel" id="savePanel">
+    <h3>Save Pulse Reading</h3>
+
+    <div class="formRow">
+      <div>
+        <label>DATE</label>
+        <input type="date" id="saveDate">
+      </div>
+
+      <div>
+        <label>TIME</label>
+        <input type="time" id="saveTime">
+      </div>
+    </div>
+
+    <button class="save" id="confirmSave">Save to Journal</button>
+    <button class="cancel" id="cancelSave">Cancel</button>
+  </div>
+
+  <div class="info">
+    <strong>How it works</strong><br>
+    Pulsemark analyzes changes in light captured by your phone's camera while your fingertip covers the camera and flash. This is an optical pulse measurement (PPG).
+  </div>
+
+</div>
+
+<div class="history">
+  <h2>Recent measurements</h2>
+  <div id="historyList"></div>
+</div>
+
+<div class="disclaimer">
+  Pulsemark is not a medical device and does not diagnose or treat medical conditions.
+  For medical blood-pressure measurements, use a validated blood-pressure cuff.
+</div>
+
+</div>
+
+<script>
+const startBtn = document.getElementById("startBtn");
+const stopBtn = document.getElementById("stopBtn");
+const saveBtn = document.getElementById("saveBtn");
+const confirmSave = document.getElementById("confirmSave");
+const cancelSave = document.getElementById("cancelSave");
+const savePanel = document.getElementById("savePanel");
+const camera = document.getElementById("camera");
+const measurement = document.getElementById("measurement");
+const bpmDisplay = document.getElementById("bpm");
+const timer = document.getElementById("timer");
+const progressBar = document.getElementById("progressBar");
+const statusText = document.getElementById("status");
+const pulseCircle = document.getElementById("pulseCircle");
+const historyList = document.getElementById("historyList");
+
+let stream = null;
+let running = false;
+let samples = [];
+let startTime = 0;
+let animationFrame = null;
+let lastMeasuredBpm = null;
+
+function setStatus(text) {
+  statusText.textContent = text;
+}
+
+function calculateBPM(samples) {
+  if (samples.length < 20) return null;
+
+  const values = samples.map(x => x.value);
+  const mean = values.reduce((a,b) => a+b, 0) / values.length;
+  const centered = values.map(v => v - mean);
+
+  let crossings = [];
+
+  for (let i = 1; i < centered.length; i++) {
+    if (centered[i - 1] < 0 && centered[i] >= 0) {
+      crossings.push(samples[i].time);
+    }
+  }
+
+  if (crossings.length < 2) return null;
+
+  let intervals = [];
+
+  for (let i = 1; i < crossings.length; i++) {
+    let interval = crossings[i] - crossings[i - 1];
+
+    if (interval > 0.35 && interval < 1.5) {
+      intervals.push(interval);
+    }
+  }
+
+  if (!intervals.length) return null;
+
+  const average =
+    intervals.reduce((a,b) => a+b, 0) / intervals.length;
+
+  const bpm = 60 / average;
+
+  if (bpm < 40 || bpm > 200) return null;
+
+  return Math.round(bpm);
+}
+
+function processFrame() {
+  if (!running) return;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 80;
+  canvas.height = 60;
+
+  const ctx = canvas.getContext("2d", {
+    willReadFrequently: true
+  });
+
+  ctx.drawImage(camera, 0, 0, 80, 60);
+
+  const data = ctx.getImageData(0, 0, 80, 60).data;
+
+  let red = 0;
+
+  for (let i = 0; i < data.length; i += 4) {
+    red += data[i];
+  }
+
+  red /= (data.length / 4);
+
+  const now = performance.now() / 1000;
+
+  samples.push({
+    time: now,
+    value: red
+  });
+
+  const cutoff = now - 12;
+
+  samples = samples.filter(x => x.time >= cutoff);
+
+  const bpm = calculateBPM(samples);
+
+  if (bpm) {
+    lastMeasuredBpm = bpm;
+    bpmDisplay.textContent = bpm;
+    saveBtn.disabled = false;
+  }
+
+  animationFrame = requestAnimationFrame(processFrame);
+}
+
+async function startMeasurement() {
+  if (!navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia) {
+    alert("Camera access is not supported by this browser.");
+    return;
+  }
+
+  try {
+    setStatus("Starting...");
+
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: { ideal: "environment" },
+        width: { ideal: 640 },
+        height: { ideal: 480 }
+      },
+      audio: false
+    });
+
+    camera.srcObject = stream;
+    await camera.play();
+
+    running = true;
+    samples = [];
+    lastMeasuredBpm = null;
+    startTime = performance.now();
+
+    measurement.classList.add("active");
+    savePanel.classList.remove("active");
+
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+    saveBtn.disabled = true;
+
+    setStatus("Measuring");
+    timer.textContent = "Keep your finger still over the camera";
+    pulseCircle.classList.add("pulse");
+
+    processFrame();
+    updateProgress();
+
+  } catch (error) {
+    console.error(error);
+    setStatus("Camera unavailable");
+    alert("Pulsemark needs camera permission. Allow camera access and try again.");
+  }
+}
+
+function updateProgress() {
+  if (!running) return;
+
+  const elapsed =
+    (performance.now() - startTime) / 1000;
+
+  const duration = 30;
+
+  const percent =
+    Math.min(100, (elapsed / duration) * 100);
+
+  progressBar.style.width = percent + "%";
+
+  timer.textContent =
+    Math.ceil(duration - elapsed) +
+    " seconds remaining";
+
+  if (elapsed >= duration) {
+    finishMeasurement();
+    return;
+  }
+
+  requestAnimationFrame(updateProgress);
+}
+
+function finishMeasurement() {
+  running = false;
+
+  if (animationFrame) {
+    cancelAnimationFrame(animationFrame);
+  }
+
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+  }
+
+  camera.srcObject = null;
+
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+
+  pulseCircle.classList.remove("pulse");
+
+  const bpm = calculateBPM(samples);
+
+  if (bpm) {
+    lastMeasuredBpm = bpm;
+    bpmDisplay.textContent = bpm;
+    saveBtn.disabled = false;
+    setStatus("Complete");
+    timer.textContent = "Measurement complete — press Save Reading";
+  } else {
+    saveBtn.disabled = true;
+    setStatus("Try again");
+    timer.textContent =
+      "Could not detect a clear pulse. Try keeping your finger still and covering the camera completely.";
+  }
+}
+
+function stopMeasurement() {
+  running = false;
+
+  if (animationFrame) {
+    cancelAnimationFrame(animationFrame);
+  }
+
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+  }
+
+  camera.srcObject = null;
+
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+  saveBtn.disabled = true;
+
+  pulseCircle.classList.remove("pulse");
+
+  setStatus("Ready");
+  timer.textContent = "Measurement stopped";
+}
+
+function openSavePanel() {
+  if (!lastMeasuredBpm) return;
+
+  const now = new Date();
+
+  document.getElementById("saveDate").value =
+    now.toISOString().split("T")[0];
+
+  document.getElementById("saveTime").value =
+    now.toTimeString().slice(0,5);
+
+  savePanel.classList.add("active");
+}
+
+function saveMeasurement() {
+  if (!lastMeasuredBpm) return;
+
+  const history = getHistory();
+
+  history.unshift({
+    id: Date.now(),
+    bpm: lastMeasuredBpm,
+    date: document.getElementById("saveDate").value,
+    time: document.getElementById("saveTime").value
+  });
+
+  localStorage.setItem(
+    "pulsemark_history",
+    JSON.stringify(history.slice(0, 50))
+  );
+
+  savePanel.classList.remove("active");
+  setStatus("Saved");
+  renderHistory();
+}
+
+function getHistory() {
+  try {
+    return JSON.parse(
+      localStorage.getItem("pulsemark_history") || "[]"
+    );
+  } catch {
+    return [];
+  }
+}
+
+function deleteMeasurement(id) {
+  const confirmed = confirm(
+    "Delete this Pulsemark journal entry?"
+  );
+
+  if (!confirmed) return;
+
+  const history = getHistory().filter(
+    item => item.id !== id
+  );
+
+  localStorage.setItem(
+    "pulsemark_history",
+    JSON.stringify(history)
+  );
+
+  renderHistory();
+}
+
+function editMeasurement(id) {
+  const history = getHistory();
+  const item = history.find(x => x.id === id);
+
+  if (!item) return;
+
+  const newBpm = prompt(
+    "Edit pulse (BPM):",
+    item.bpm
+  );
+
+  if (newBpm === null) return;
+
+  const bpm = Number(newBpm);
+
+  if (!Number.isFinite(bpm) || bpm < 30 || bpm > 220) {
+    alert("Please enter a valid BPM between 30 and 220.");
+    return;
+  }
+
+  item.bpm = Math.round(bpm);
+
+  localStorage.setItem(
+    "pulsemark_history",
+    JSON.stringify(history)
+  );
+
+  renderHistory();
+}
+
+function formatDate(date) {
+  if (!date) return "";
+
+  const d = new Date(date + "T00:00:00");
+
+  return d.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+}
+
+function renderHistory() {
+  const history = getHistory();
+
+  if (!history.length) {
+    historyList.innerHTML = `
+      <div class="historyItem">
+        <small>No measurements yet</small>
+      </div>
+    `;
+    return;
+  }
+
+  historyList.innerHTML = history.map(item => `
+    <div class="historyItem">
+
+      <div class="historyInfo">
+        <strong>${escapeHTML(String(item.bpm))}</strong> BPM
+        <br>
+        <small>
+          ${formatDate(item.date)}
+          ${item.time ? " • " + escapeHTML(item.time) : ""}
+        </small>
+      </div>
+
+      <div class="historyActions">
+
+        <button
+          class="editBtn"
+          onclick="editMeasurement(${item.id})">
+          Edit
+        </button>
+
+        <button
+          class="deleteBtn"
+          onclick="deleteMeasurement(${item.id})">
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+  `).join("");
+}
+
+function escapeHTML(text) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+startBtn.addEventListener("click", startMeasurement);
+stopBtn.addEventListener("click", stopMeasurement);
+saveBtn.addEventListener("click", openSavePanel);
+confirmSave.addEventListener("click", saveMeasurement);
+
+cancelSave.addEventListener("click", () => {
+  savePanel.classList.remove("active");
+});
+
+renderHistory();
+</script>
+
+</body>
+</html>
